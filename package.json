@@ -1,6 +1,6 @@
 {
   "name": "karma-webpack",
-  "version": "3.0.0",
+  "version": "3.0.1",
   "author": "Tobias Koppers @sokra",
   "description": "Use webpack with karma",
   "license": "MIT",
@@ -17,7 +17,7 @@
     "clean": "del-cli lib",
     "build": "cross-env NODE_ENV=production babel src -d lib --ignore 'src/**/*.test.js' --copy-files",
     "test": "mocha --compilers js:babel-register --full-trace --check-leaks test/unit",
-    "test:integration": "npm run build && karma start --single-run",
+    "test:integration": "npm run build && karma start --watch",
     "travis": "npm run test && npm run test:integration",
     "travis:lint": "npm run lint",
     "travis:test": "npm run test",
