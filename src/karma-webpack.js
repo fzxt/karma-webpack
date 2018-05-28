@@ -75,6 +75,8 @@ function Plugin(
   this.files = []
   this.basePath = basePath
   this.waiting = []
+  this.hotModules = {}
+  this.hotFiles = []
 
   var compiler
 
@@ -108,9 +110,23 @@ function Plugin(
   })
 
   compiler.plugin('done', function(stats) {
+
     var applyStats = Array.isArray(stats.stats) ? stats.stats : [stats]
     var assets = []
     var noAssets = false
+
+    stats.compilation.modules
+      .forEach(module => {
+        if (module.hot) {
+          this.hotFiles.push(module.rawRequest)
+        }
+      })
+
+
+    // For debugging purposes
+    this.hotFiles.forEach(file => {
+      console.log(`Detected change, recompiling: ${file}`)
+    })
 
     applyStats.forEach(function(stats) {
       stats = stats.toJson()
@@ -156,6 +172,14 @@ function Plugin(
         res.statusCode = 404
         res.end('Not found')
       })
+    }
+  })
+
+  emitter.on('run_complete', (args) => {
+    if (args.getResults().failed) {
+      [].push.apply(this.failedFiles, this.hotFiles)
+    } else {
+      this.failedFiles = []
     }
   })
 
@@ -268,10 +292,17 @@ function createPreprocesor(/* config.basePath */ basePath, webpackPlugin) {
         throw err
       }
 
-      done(err, content && content.toString())
+      function addManifest(content) {
+        var hotFiles = JSON.stringify(webpackPlugin.hotFiles.concat(webpackPlugin.failedFiles))
+        return content.replace(/__karmaWebpackManifest__\s*=\s*\[\s*\]/gm, "__karmaWebpackManifest__=" + hotFiles)
+      }
+
+
+      done(err, content && content.toString() && addManifest(content.toString()))
     })
   }
 }
+
 
 function createWebpackBlocker() {
   return function(request, response, next) {
