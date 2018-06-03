@@ -165,6 +165,9 @@ function Plugin(
   }.bind(this))
 
   webpackMiddlewareOptions.publicPath = path.join(os.tmpdir(), '_karma_webpack_', '/')
+  webpackMiddlewareOptions.aggregateTimeout = 300
+  webpackMiddlewareOptions.poll = 1000
+
   var middleware = this.middleware = new webpackDevMiddleware(compiler, webpackMiddlewareOptions)
   var hmr = new webpackHotMiddleware(compiler)
 
