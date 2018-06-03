@@ -67,7 +67,6 @@ function Plugin(
     if (includeIndex) {
       webpackOptions.output.jsonpFunction = `webpackJsonp${index}`
     }
-    webpackOptions.output.chunkFilename = '[id].bundle.js'
   })
 
   this.emitter = emitter
