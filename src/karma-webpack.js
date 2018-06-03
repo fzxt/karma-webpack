@@ -119,6 +119,7 @@ function Plugin(
       .forEach(module => {
         if (module.hot) {
           this.hotFiles.push(module.rawRequest)
+          console.log(`Hot module: ${module.hot}`)
         }
       })
 
