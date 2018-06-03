@@ -9,6 +9,7 @@ var _ = require('lodash')
 var path = require('path')
 var async = require('async')
 var webpackDevMiddleware = require('webpack-dev-middleware')
+var webpackHotMiddleware = require('webpack-hot-middleware')
 var webpack = require('webpack')
 var SingleEntryDependency = require('webpack/lib/dependencies/SingleEntryDependency')
 
@@ -165,6 +166,7 @@ function Plugin(
 
   webpackMiddlewareOptions.publicPath = path.join(os.tmpdir(), '_karma_webpack_', '/')
   var middleware = this.middleware = new webpackDevMiddleware(compiler, webpackMiddlewareOptions)
+  var hmr = new webpackHotMiddleware(compiler)
 
   customFileHandlers.push({
     urlRegex: new RegExp(`^${escapeRegExp(webpackMiddlewareOptions.publicPath)}.*`),
